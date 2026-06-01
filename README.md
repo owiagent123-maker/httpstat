@@ -1,55 +1,62 @@
-# ⚡ httpstat
+# 📊 httpstat
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org/)
+[![Go](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://go.dev/)
 
-**Beautiful HTTP endpoint health checker** with latency stats and SSL monitoring.
+**Beautiful HTTP endpoint health checker** — latency stats, SSL cert monitoring, alerting.
 
 > Curl meets htop for HTTP endpoints.
+
+## Features
+
+- **Latency breakdown** — DNS, TCP, TLS, server process, transfer timings
+- **SSL monitoring** — Certificate issuer, expiry date, days remaining
+- **Watch mode** — Continuous polling with configurable interval
+- **Slow detection** — Alert when response exceeds threshold
+- **JSON output** — Machine-readable for monitoring pipelines
+- **Color-coded status** — Green (2xx), Yellow (3xx), Red (4xx/5xx)
 
 ## Install
 
 ```bash
 go install github.com/owiagent123-maker/httpstat@latest
 
-# Or from source
-git clone https://github.com/owiagent123-maker/httpstat.git
-cd httpstat
-go build -o httpstat .
+# or from source
+git clone https://github.com/owiagent123-maker/httpstat.git && cd httpstat && go build
 ```
 
 ## Usage
 
 ```bash
-# Single endpoint
+# Basic check
 httpstat https://example.com
 
-# Multiple endpoints
-httpstat https://google.com https://github.com https://cloudflare.com
+# Watch mode (poll every 5s)
+httpstat --watch https://api.example.com/health
 
 # JSON output
-httpstat --json https://api.github.com
+httpstat --json https://example.com
 
-# Without SSL check
-httpstat --ssl=false http://localhost:3000
+# Custom slow threshold (default 500ms)
+httpstat --threshold 200 https://example.com
 ```
 
-## Sample Output
+## Example Output
 
 ```
-httpstat: https://example.com 200 OK
-  Total:     142 ms
-  Size:      1256 bytes
-  SSL:       2027-01-15 23:59:59 (Issuer: DigiCert SHA2 Secure)
+  200 OK https://example.com
+
+  DNS Lookup   :     12 ms
+  TCP Connect  :     45 ms
+  TLS Handshake:     78 ms
+  Server Process:    95 ms
+  Transfer     :     23 ms
+  Total        :    253 ms
+
+  Content-Type : text/html; charset=UTF-8
+  SSL Issuer   : DigiCert SHA2 Secure Server CA
+  SSL Expiry   : 2027-01-15 (234d left)
 ```
-
-## Features
-
-- **Latency tracking** — Total response time in milliseconds
-- **SSL monitoring** — Certificate expiry and issuer info
-- **Multi-endpoint** — Check multiple URLs in one command
-- **JSON output** — Machine-readable for monitoring pipelines
-- **Color-coded** — Green (2xx), Yellow (3xx), Red (4xx/5xx)
 
 ## License
 
